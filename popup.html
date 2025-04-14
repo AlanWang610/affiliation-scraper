@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Affiliation Scraper</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+    }
+    button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 4px;
+      background-color: #f1f1f1;
+    }
+    .options-link {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+    }
+    .debug-section {
+      margin-top: 15px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+    .debug-content {
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: #f8f8f8;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-top: 5px;
+    }
+    .debug-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5px;
+    }
+    .debug-buttons button {
+      width: 48%;
+    }
+  </style>
+</head>
+<body>
+  <h2>Affiliation Scraper</h2>
+  <div class="status" id="status">No CSV file loaded. Go to options to upload a file.</div>
+  <button id="toggleButton">Start Scraping</button>
+  <a href="#" id="optionsLink" class="options-link">Open Options</a>
+  
+  <div class="debug-section">
+    <h3>Debug Information</h3>
+    <div class="debug-content" id="debugContent">No debug information available</div>
+    <div class="debug-buttons">
+      <button id="clearDebugButton">Clear Debug Info</button>
+      <button id="toggleDebugButton">Hide Debug</button>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html> 

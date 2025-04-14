@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Affiliation Scraper Options</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #4285f4;
+    }
+    .upload-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .csv-info {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f1f1f1;
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .preview-container {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    button {
+      padding: 8px 16px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+    .export-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Affiliation Scraper Options</h1>
+  
+  <div class="upload-section">
+    <h2>Upload CSV File</h2>
+    <p>Upload a CSV file with columns: author, title, and affiliation.</p>
+    <input type="file" id="csvFileInput" accept=".csv">
+    <div id="csvInfo" class="csv-info">No file uploaded</div>
+  </div>
+  
+  <div class="preview-container">
+    <h2>CSV Preview</h2>
+    <div id="csvPreview"></div>
+  </div>
+  
+  <button id="clearDataButton">Clear All Data</button>
+  
+  <div class="export-section">
+    <h2>Export Data</h2>
+    <p>Download the current data with affiliations as a CSV file.</p>
+    <button id="exportButton">Export CSV</button>
+  </div>
+  
+  <script src="options.js"></script>
+</body>
+</html> 

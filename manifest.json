@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Affiliation Scraper",
+  "version": "1.0",
+  "description": "Scrapes Google Scholar for author affiliations",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://scholar.google.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://scholar.google.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+} 
