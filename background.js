@@ -113,6 +113,27 @@ function processCurrentEntry(csvData, currentIndex) {
     return;
   }
   
+  // Check for duplicate entries
+  const duplicateEntry = findDuplicateEntry(csvData, entry, currentIndex);
+  if (duplicateEntry) {
+    // Copy affiliation from duplicate entry
+    entry.affiliation = duplicateEntry.affiliation;
+    
+    // Save the updated data
+    chrome.storage.local.set({ csvData: csvData }, () => {
+      // Notify the options page to refresh the display
+      chrome.runtime.sendMessage({ action: 'csvUpdated' });
+      chrome.runtime.sendMessage({
+        action: 'debugInfo',
+        content: `Copied affiliation "${entry.affiliation}" from duplicate entry for "${entry.author}"`
+      });
+      
+      // Move to the next entry
+      moveToNextEntry();
+    });
+    return;
+  }
+  
   // Find or create a tab with Google Scholar
   chrome.tabs.query({ url: 'https://scholar.google.com/scholar?hl=en*' }, (tabs) => {
     if (tabs.length > 0) {
@@ -127,6 +148,32 @@ function processCurrentEntry(csvData, currentIndex) {
       });
     }
   });
+}
+
+// Find duplicate entry based on author name and paper title
+function findDuplicateEntry(csvData, currentEntry, currentIndex) {
+  // Normalize the current entry's author and title for comparison
+  const normalizedAuthor = currentEntry.author.toLowerCase().trim();
+  const normalizedTitle = currentEntry.title.toLowerCase().trim();
+  
+  // Look for matching entries that already have an affiliation
+  for (let i = 0; i < currentIndex; i++) {
+    const entry = csvData[i];
+    
+    // Skip entries without affiliations
+    if (!entry.affiliation) continue;
+    
+    // Normalize the entry's author and title for comparison
+    const entryAuthor = entry.author.toLowerCase().trim();
+    const entryTitle = entry.title.toLowerCase().trim();
+    
+    // Check if both author and title match
+    if (normalizedAuthor === entryAuthor && normalizedTitle === entryTitle) {
+      return entry;
+    }
+  }
+  
+  return null; // No duplicate found
 }
 
 // Start the search process in the tab
@@ -230,4 +277,73 @@ function notifyStatusUpdate(csvData, currentIndex) {
 // Helper function to get a random delay
 function getRandomDelay(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// When checking if a scholar name matches, also check first initial
+function checkNameMatch(scholarName, targetLastName, targetFirstInitial) {
+  // Extract last name from scholar name (assuming format is "First Last" or similar)
+  const nameParts = scholarName.trim().split(' ');
+  const scholarLastName = nameParts[nameParts.length - 1];
+  
+  // Extract first initial from scholar name
+  const scholarFirstInitial = nameParts[0].charAt(0);
+  
+  // Check if both last name and first initial match
+  return scholarLastName.toLowerCase() === targetLastName.toLowerCase() && 
+         scholarFirstInitial.toLowerCase() === targetFirstInitial.toLowerCase();
+}
+
+// Modify the existing code that processes scholar links
+function processScholarLinks(scholarLinks, targetLastName, targetFirstName) {
+  const targetFirstInitial = targetFirstName.charAt(0);
+  
+  for (const link of scholarLinks) {
+    const scholarName = link.textContent.trim();
+    if (checkNameMatch(scholarName, targetLastName, targetFirstInitial)) {
+      // This is a match, navigate to the scholar's page
+      return link.href;
+    }
+  }
+  return null; // No matching scholar found
+}
+
+// Add this function to check if a scholar page is valid
+async function isValidScholarPage(scholarPageUrl) {
+  try {
+    const response = await fetch(scholarPageUrl);
+    const html = await response.text();
+    
+    // Create a DOM parser to analyze the page content
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Check for elements that would indicate a valid scholar page
+    // For example, look for the profile information section
+    const profileSection = doc.querySelector('.gsc_lcl');
+    
+    // If the profile section exists, it's likely a valid page
+    return !!profileSection;
+  } catch (error) {
+    console.error('Error checking scholar page validity:', error);
+    return false;
+  }
+}
+
+// Modify your existing function that processes scholar information
+async function processScholarInfo(scholarPageUrl, scholarData) {
+  if (!scholarPageUrl) {
+    scholarData.affiliation = "no scholar page found";
+    return scholarData;
+  }
+  
+  // Check if the scholar page is valid
+  const isValid = await isValidScholarPage(scholarPageUrl);
+  
+  if (!isValid) {
+    scholarData.affiliation = "no scholar page found";
+    return scholarData;
+  }
+  
+  // Continue with existing logic to extract affiliation from valid page
+  // ... existing code ...
 } 
